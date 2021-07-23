@@ -1,0 +1,2 @@
+model_checkpoint_path: "parse.ckpt-2700"
+all_model_checkpoint_paths: "parse.ckpt-2700"

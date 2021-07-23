@@ -68,6 +68,8 @@ tf.app.flags.DEFINE_boolean("self_test", False,
                             "Run a self-test if this is set to True.")
 tf.app.flags.DEFINE_boolean("use_fp16", False,
                             "Train using fp16 instead of fp32.")
+tf.app.flags.DEFINE_boolean("forward_pass", False,
+                            "Set to True to only convert Natural Language Sentence to Formal Representation")                            
 
 
 
@@ -135,7 +137,7 @@ def create_model(session, forward_only, use_dropout):
       use_dropout=use_dropout,
       dtype=dtype)
   ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
-  if FLAGS.decode or FLAGS.test:
+  if FLAGS.decode or FLAGS.test or FLAGS.forward_pass:
     if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
         print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
         model.saver.restore(session, ckpt.model_checkpoint_path)
@@ -517,9 +519,70 @@ def main(_):
     
     print("computing test accuracy...")
     test_acc = test_accuracy(from_test_data,to_test_data)
-    print("test accuracy =",test_acc)
+    print("test accuracy =", test_acc) 
+  elif FLAGS.forward_pass:
+    pass
   else:
     train()
+
+def forward_pass():
+  config_ = tf.ConfigProto()
+  config_.gpu_options.allow_growth = True
+  config_.allow_soft_placement = True
+
+  with tf.Session(config=config_) as sess:
+        # Create model and load parameters.
+        model = create_model(sess, True, False)
+        model.batch_size = 1  # We decode one sentence at a time.
+
+        print("loading data...")
+        # Load vocabularies.
+        from_vocab_path = os.path.join(FLAGS.data_dir,"vocab%d.from" % FLAGS.from_vocab_size)
+        to_vocab_path = os.path.join(FLAGS.data_dir,"vocab%d.to" % FLAGS.to_vocab_size)
+        from_vocab, _ = data_utils.initialize_vocabulary(from_vocab_path)
+        to_vocab, rev_to_vocab = data_utils.initialize_vocabulary(to_vocab_path)
+
+        # read test data
+        test_data = data_utils.tokenize_dataset(from_data,to_data,from_vocab,to_vocab)
+        print("data loaded. computing accuracy...")
+        val_acc = 0
+        comm_dict = init_comm_dict(to_vocab)
+        rev_to_vocab_dict = reverseDict(to_vocab)
+        
+        for data in test_data:
+
+            from_token_ids = data[0]
+            to_token_ids = data[1]
+      
+            # Which bucket does it belong to?
+            bucket_id = len(_buckets) - 1
+            for i, bucket in enumerate(_buckets):
+                if bucket[0] >= len(from_token_ids):
+                    bucket_id = i
+                    break
+                else:
+                    logging.warning("Sentence truncated: %s", sentence)
+
+            # Get a 1-element batch to feed the sentence to the model.
+            encoder_inputs, decoder_inputs, target_weights = model.get_batch({bucket_id: [(from_token_ids, [])]}, bucket_id)
+            # Get output logits for the sentence.
+            _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs,
+                                       target_weights, bucket_id, True)
+            # This is a greedy decoder - outputs are just argmaxes of output_logits.
+            outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
+            # If there is an EOS symbol in outputs, cut them at that point.
+            if data_utils.EOS_ID in outputs:
+                outputs = outputs[:outputs.index(data_utils.EOS_ID)]
+            
+            outputs = post_process(outputs,to_vocab)
+            
+            if compute_tree_accuracy(outputs,to_token_ids,to_vocab,rev_to_vocab_dict,comm_dict,FLAGS.display):
+                val_acc+= 1
+                
+            
+        val_acc = val_acc/float(len(test_data))
+        
+    return val_acc
 
 if __name__ == "__main__":
   tf.app.run()
