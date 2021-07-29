@@ -1,2 +1,40 @@
-which state is the smallest
-which is the longest river in co0
+show the bottle to me
+Please bring me the cup
+Robot, get the cup to me
+show the box to me
+Robot, convey the box to me
+show me the bottle
+Robot, show the cup to me
+Please get the bottle to me
+put the cup on the table
+Robot, convey the book to me
+Please where's the book
+Please get the cup to me
+drag the cup to the cup
+Robot, show the bottle to me
+Please bring me the box
+Please bring me the book
+Please show me the cup
+Robot, indicate the cup to me
+pick up the box
+Robot, convey the cup to me
+bring the cup to me
+pick up the bottle
+convey the bottle to me
+Please show me the box
+Please show the book to me
+Robot, indicate the bottle to me
+show me the box
+where's the book
+put the bottle on the table
+indicate the book to me
+Robot, put the cup on the table
+where's the box
+Please where's the cup
+bring the bottle to me
+drag the book to the cup
+Please drag the cup to the cup
+Robot, show me the cup
+convey the book to me
+show the cup to me
+Robot, show me the box
