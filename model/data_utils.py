@@ -292,19 +292,20 @@ def tokenize_dataset(from_data,to_data,from_vocab,to_vocab):
         dataset.append([token_ids])
        
     f_from.close()
-    
-    f_to = open(to_data,"r")
-    idx = -1
-    for line in f_to:
-        line = line.strip()
-        if len(line)<1:
-            continue
-            
-        idx += 1
-        token_ids = sentence_to_token_ids(line, to_vocab)
-        dataset[idx].append(token_ids)
-        
-    f_to.close()
+
+    if to_data and to_vocab: 
+      f_to = open(to_data,"r")
+      idx = -1
+      for line in f_to:
+          line = line.strip()
+          if len(line)<1:
+              continue
+              
+          idx += 1
+          token_ids = sentence_to_token_ids(line, to_vocab)
+          dataset[idx].append(token_ids)
+          
+      f_to.close()
     
     return dataset
     

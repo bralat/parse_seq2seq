@@ -16,6 +16,9 @@ def reverseDict(d):
     return reverse
     
 def post_process(candidate,vocab):
+    '''
+    This function adds missing parentheses or removes redundant ones
+    '''
     new_candidate = []
     c_left = 0
     c_right = 0
@@ -152,6 +155,22 @@ def compute_tree_accuracy(candidate_list,reference_list,vocab,rev_vocab,comm_dic
         print(sorted_candidate_str)
     
     return is_all_same(sorted_candidate,sorted_reference)
+
+def get_output_sentence (candidate_list,vocab,rev_vocab,comm_dict):
+    sorted_candidate, sorted_reference = None, None
+    
+    # used only for overnight dataset
+    if ('call' in vocab) and ('SW.filter' in vocab):
+        sorted_candidate = flatten_filter(candidate_list,vocab)
+    else:
+        sorted_candidate = candidate_list
+        
+
+    sorted_candidate = sort_args(sorted_candidate,vocab,comm_dict)
+    
+    sorted_candidate_str = '%s' % ' '.join(rev_vocab[token] for token in sorted_candidate)
+    
+    return sorted_candidate_str
 
 # function to detect special SW.filter tokens in overnight    
 # dataset, return [arg1,[arg2,arg3,...]] else return none

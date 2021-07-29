@@ -1,28 +1,2 @@
 which state is the smallest	( argmin:<> ( lambda $0 ( state:<> $0 ) ) ( lambda $1 ( size:<> $1 ) ) )
 which is the longest river in co0	( argmax:<> ( lambda $0 ( and:<> ( river:<> $0 ) ( loc:<> $0 co0 ) ) ) ( lambda $1 ( len:<> $1 ) ) )
-what are the major cities in s0	( lambda $0 ( and:<> ( major:<> $0 ) ( city:<> $0 ) ( loc:<> $0 s0 ) ) )
-what is the population of s0	( population:<> s0 )
-how many states are there in co0	( count:<> ( lambda $0 ( and:<> ( state:<> $0 ) ( loc:<> $0 co0 ) ) ) )
-what states are next to s0	( lambda $0 ( and:<> ( state:<> $0 ) ( next_to:<> $0 s0 ) ) )
-what is the lowest point in s0	( 
-    argmin:<> ( 
-        lambda $0 ( 
-            and:<> ( 
-                place:<> $0 
-            ) ( 
-                loc:<> $0 s0 
-            ) 
-        ) 
-    ) ( 
-        lambda $1 ( 
-            elevation:<> $1 ) 
-    ) 
-)
-what is the most populous state	( argmax:<> ( lambda $0 ( state:<> $0 ) ) ( lambda $1 ( population:<> $1 ) ) )
-what are the population of s0	( population:<> s0 )
-which state borders the most states	( argmax:<> ( lambda $0 ( state:<> $0 ) ) ( lambda $1 ( count:<> ( lambda $2 ( and:<> ( state:<> $2 ) ( next_to:<> $1 $2 ) ) ) ) ) )
-which co0 city has the highest population density	( argmax:<> ( lambda $0 ( and:<> ( city:<> $0 ) ( loc:<> $0 co0 ) ) ) ( lambda $1 ( density:<> $1 ) ) )
-what is the area of s0	( area:<> s0 )
-how big is s0	( size:<> s0 )
-what is the population of the smallest state	( population:<> ( argmin:<> ( lambda $0 ( state:<> $0 ) ) ( lambda $1 ( size:<> $1 ) ) ) )
-which is the density of the state that the largest river in co0 runs through	( density:<> ( the:<> ( lambda $0 ( and:<> ( loc:<> ( argmax:<> ( lambda $1 ( and:<> ( loc:<> $1 co0 ) ( river:<> $1 ) ) ) ( lambda $2 ( size:<> $2 ) ) ) $0 ) ( state:<> $0 ) ) ) ) )
