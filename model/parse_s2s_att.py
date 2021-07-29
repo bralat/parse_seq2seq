@@ -381,13 +381,10 @@ def test_accuracy(from_data,to_data):
 
         # read test data
         test_data = data_utils.tokenize_dataset(from_data,to_data,from_vocab,to_vocab)
-        print("dataset: ", test_data)
         print("data loaded. computing accuracy...")
         val_acc = 0
         comm_dict = init_comm_dict(to_vocab)
-        print("comm_dict: ", comm_dict)
         rev_to_vocab_dict = reverseDict(to_vocab)
-        print("rev_to_vocab_dict: ", rev_to_vocab_dict)
         
         for data in test_data:
 
@@ -537,7 +534,6 @@ def forward_pass(from_data):
         for data in test_data:
 
             from_token_ids = data[0]
-            # to_token_ids = data[1]
       
             # Which bucket does it belong to?
             bucket_id = len(_buckets) - 1

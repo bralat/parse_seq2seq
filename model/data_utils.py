@@ -212,13 +212,12 @@ def splitToFrom(data_dir,inputFile,out_key):
     toFile = out_key+"_f.txt"
     fw_from = open(os.path.join(data_dir,fromFile),"w")
     fw_to = open(os.path.join(data_dir,toFile),"w")
-    # print("*************SPLIT FILES************", os.path.join(data_dir,inputFile))
+    
     if inputFile.endswith(".csv"):
       with open(os.path.join(data_dir,inputFile)) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
         count=0
         for row in csv_reader:
-          # print("****rows******", row[0])
           if count == 0:
             count+=1
             continue
