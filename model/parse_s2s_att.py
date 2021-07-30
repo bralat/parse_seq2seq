@@ -584,7 +584,7 @@ def main(_):
     print("computing test accuracy...")
     test_acc = test_accuracy(from_test_data,to_test_data)
     print("test accuracy =", test_acc) 
-  elif FLAGS.forward_pass:
+  elif FLAGS.inference:
     from_test_data = os.path.join(FLAGS.data_dir,FLAGS.test_file)
     if not (os.path.exists(from_test_data)):
       print("test data file missing!")
