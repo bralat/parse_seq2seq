@@ -1,2 +1,0 @@
-( argmin:<> ( lambda $0 ( state:<> $0 ) ) ( lambda $1 ( size:<> $1 ) ) )
-( argmax:<> ( lambda $0 ( and:<> ( river:<> $0 ) ( loc:<> $0 co0 ) ) ) ( lambda $1 ( len:<> $1 ) ) )

@@ -1,2 +1,0 @@
-which state is the smallest	( argmin:<> ( lambda $0 ( state:<> $0 ) ) ( lambda $1 ( size:<> $1 ) ) )
-which is the longest river in co0	( argmax:<> ( lambda $0 ( and:<> ( river:<> $0 ) ( loc:<> $0 co0 ) ) ) ( lambda $1 ( len:<> $1 ) ) )
