@@ -68,8 +68,8 @@ tf.app.flags.DEFINE_boolean("self_test", False,
                             "Run a self-test if this is set to True.")
 tf.app.flags.DEFINE_boolean("use_fp16", False,
                             "Train using fp16 instead of fp32.")
-tf.app.flags.DEFINE_boolean("forward_pass", False,
-                            "Set to True to only convert Natural Language Sentence to Formal Representation")                            
+tf.app.flags.DEFINE_boolean("inference", False,
+                            "Set to True to use perform inference only on the input data")                            
 
 
 
@@ -381,13 +381,10 @@ def test_accuracy(from_data,to_data):
 
         # read test data
         test_data = data_utils.tokenize_dataset(from_data,to_data,from_vocab,to_vocab)
-        print("dataset: ", test_data)
         print("data loaded. computing accuracy...")
         val_acc = 0
         comm_dict = init_comm_dict(to_vocab)
-        print("comm_dict: ", comm_dict)
         rev_to_vocab_dict = reverseDict(to_vocab)
-        print("rev_to_vocab_dict: ", rev_to_vocab_dict)
         
         for data in test_data:
 
@@ -416,7 +413,6 @@ def test_accuracy(from_data,to_data):
                 outputs = outputs[:outputs.index(data_utils.EOS_ID)]
             
             outputs = post_process(outputs,to_vocab)
-            print("outputs: ", outputs)
             
             if compute_tree_accuracy(outputs,to_token_ids,to_vocab,rev_to_vocab_dict,comm_dict,FLAGS.display):
                 val_acc+= 1
