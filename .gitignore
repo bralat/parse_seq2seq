@@ -5,5 +5,5 @@ checkpoint/*
 data/*
 !data/geoqueries_train.txt
 !data/geoqueries_test.txt
-!data/dataset_train.txt
-!data/dataset_test.txt
+!data/dataset_train.csv
+!data/dataset_test.csv
