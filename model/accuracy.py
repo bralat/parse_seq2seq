@@ -147,8 +147,8 @@ def compute_tree_accuracy(candidate_list,reference_list,vocab,rev_vocab,comm_dic
         sorted_candidate = candidate_list
         sorted_reference = reference_list
         
-    # sorted_candidate = sort_args(sorted_candidate,vocab,comm_dict)
-    # sorted_reference = sort_args(sorted_reference,vocab,comm_dict)
+    sorted_candidate = sort_args(sorted_candidate,vocab,comm_dict)
+    sorted_reference = sort_args(sorted_reference,vocab,comm_dict)
     
     if display:
         print()
