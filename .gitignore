@@ -1,2 +1,7 @@
 **/__pycache__/
 *.pyc
+checkpoint/*
+!checkpoint/checkpoint.txt
+data/*
+!data/geoqueries_train.txt
+!data/geoqueries_test.txt

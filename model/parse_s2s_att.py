@@ -137,7 +137,7 @@ def create_model(session, forward_only, use_dropout):
       use_dropout=use_dropout,
       dtype=dtype)
   ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
-  if FLAGS.decode or FLAGS.test or FLAGS.forward_pass:
+  if FLAGS.decode or FLAGS.test or FLAGS.inference:
     if ckpt and tf.train.checkpoint_exists(ckpt.model_checkpoint_path):
         print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
         model.saver.restore(session, ckpt.model_checkpoint_path)
@@ -224,23 +224,20 @@ def train():
     print("using training files",from_train_data,"and",to_train_data)
     from_dev_data = from_train_data
     to_dev_data = to_train_data
-    data_utils.splitToFrom(FLAGS.data_dir,FLAGS.train_file,"train") # split to-from data
+    data_utils.splitToFrom(FLAGS.data_dir,FLAGS.train_file,"train", id_arg=True) # split to-from data
     if FLAGS.dev_file:
-      data_utils.splitToFrom(FLAGS.data_dir,FLAGS.dev_file,"valid") # split to-from data
+      data_utils.splitToFrom(FLAGS.data_dir,FLAGS.dev_file,"valid", id_arg=True) # split to-from data
       from_dev_data = os.path.join(FLAGS.data_dir,"valid_q.txt")
       to_dev_data = os.path.join(FLAGS.data_dir,"valid_f.txt")
       print("using validation files",from_dev_data,"and",to_dev_data,"for validation")
     elif FLAGS.test_file:
-      data_utils.splitToFrom(FLAGS.data_dir,FLAGS.test_file,"test") # split to-from data
+      data_utils.splitToFrom(FLAGS.data_dir,FLAGS.test_file,"test", id_arg=True) # split to-from data
       from_dev_data = os.path.join(FLAGS.data_dir,"test_q.txt")
       to_dev_data = os.path.join(FLAGS.data_dir,"test_f.txt")
       print("using test files",from_dev_data,"and",to_dev_data,"for validation")
     else:
       print("using train files",from_dev_data,"and",to_dev_data,"for validation")
     
-  
-    # preprocess file
-    data_utils.identify_constants(from_train_data,to_train_data)
 
     from_train, to_train, from_dev, to_dev, _, _ = data_utils.prepare_data(
         FLAGS.data_dir,
@@ -506,7 +503,7 @@ def self_test():
       model.step(sess, encoder_inputs, decoder_inputs, target_weights,
                  bucket_id, False)
 
-def forward_pass(from_data):
+def forward_pass(from_data, args_data):
   config_ = tf.ConfigProto()
   config_.gpu_options.allow_growth = True
   config_.allow_soft_placement = True
@@ -534,11 +531,11 @@ def forward_pass(from_data):
         path_to_output = os.path.join(FLAGS.data_dir, "output_"+FLAGS.test_file)
         open(path_to_output, 'w').close()
         
-        for data in test_data:
-
+        f_args_data = open(args_data, "r")
+        # for data in test_data:  
+        for i,args in enumerate(f_args_data):
+            data = test_data[i]    
             from_token_ids = data[0]
-            # to_token_ids = data[1]
-      
             # Which bucket does it belong to?
             bucket_id = len(_buckets) - 1
             for i, bucket in enumerate(_buckets):
@@ -565,6 +562,11 @@ def forward_pass(from_data):
             sen = get_output_sentence(outputs,to_vocab,rev_to_vocab_dict,comm_dict)                
             print(sen)
 
+            #replace arguments
+            
+            for i,arg in enumerate(args.split(",")):
+              sen = sen.replace("arg"+str(i), arg)
+
             # save new data to file
             with open(path_to_output, "a") as file_object:
               file_object.write(sen+"\n")
@@ -580,9 +582,7 @@ def main(_):
     to_test_data = os.path.join(FLAGS.data_dir,"test_f.txt")
     if not (os.path.exists(from_test_data) and os.path.exists(to_test_data)):
         if FLAGS.test_file:
-            data_utils.splitToFrom(FLAGS.data_dir,FLAGS.test_file,"test") # split to-from data
-            # preprocess file
-            data_utils.identify_constants(from_test_data)
+            data_utils.splitToFrom(FLAGS.data_dir,FLAGS.test_file,"test", id_arg=True) # split to-from data
         else:
             print("test data file missing!")
             return
@@ -595,9 +595,23 @@ def main(_):
     if not (os.path.exists(from_test_data)):
       print("test data file missing!")
       return
+
+    #identify constants
+    from_data = os.path.join(FLAGS.data_dir, "inference_q.txt")
+    args_data = os.path.join(FLAGS.data_dir, "inference_q.txt.args")
+    f_from_data = open(from_data, 'w')
+    f_args_data = open(args_data, "w")
+    with open(from_test_data, "r") as f_from_test_data:
+      for i,line in enumerate(f_from_test_data):
+        new_line, _, args = data_utils.replace_constants(line)
+        f_from_data.write(new_line)
+        f_args_data.write(",".join(args)+"\n")
+
+    f_from_data.close()
+    f_args_data.close()
       
     print("computing output ...")
-    forward_pass(from_test_data)
+    forward_pass(from_data, args_data)
   else:
     train()
 
