@@ -19,6 +19,12 @@ def post_process(candidate,vocab):
     '''
     This function adds missing parentheses or removes redundant ones
     '''
+    # ensure that candidate starts and ends with parenthesis
+    if candidate[0] != vocab['(']:
+        candidate.insert(0, vocab['('])
+    if candidate[len(candidate)-1] != vocab[')']:
+        candidate.append(vocab[')'])
+
     new_candidate = []
     c_left = 0
     c_right = 0
@@ -29,7 +35,6 @@ def post_process(candidate,vocab):
         elif token == vocab[')']:
             c_right = c_right +1
     
-
     if c_right > c_left:
         for j in range(c_right - c_left):
             new_candidate.pop()
@@ -38,7 +43,6 @@ def post_process(candidate,vocab):
         for j in range(c_left - c_right):
             new_candidate.append(vocab[')'])
             
-
     return new_candidate
     
 def to_lisp_tree(toks,vocab):
@@ -143,16 +147,20 @@ def compute_tree_accuracy(candidate_list,reference_list,vocab,rev_vocab,comm_dic
         sorted_candidate = candidate_list
         sorted_reference = reference_list
         
-
-    sorted_candidate = sort_args(sorted_candidate,vocab,comm_dict)
-    sorted_reference = sort_args(sorted_reference,vocab,comm_dict)
+    # sorted_candidate = sort_args(sorted_candidate,vocab,comm_dict)
+    # sorted_reference = sort_args(sorted_reference,vocab,comm_dict)
     
     if display:
         print()
-        sorted_candidate_str = '%s' % ' '.join(rev_vocab[token] for token in sorted_candidate)
         sorted_reference_str = '%s' % ' '.join(rev_vocab[token] for token in sorted_reference)
-        print(sorted_reference_str)
-        print(sorted_candidate_str)
+        sorted_candidate_str = '%s' % ' '.join(rev_vocab[token] for token in sorted_candidate)
+        
+        # print(reference_list)
+        # print(sorted_reference)
+        # print(sorted_reference_str)
+        # print(candidate_list)
+        # print(sorted_candidate)
+        # print(sorted_candidate_str)
     
     return is_all_same(sorted_candidate,sorted_reference)
 

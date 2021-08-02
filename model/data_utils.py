@@ -224,6 +224,7 @@ def splitToFrom(data_dir,inputFile,out_key, id_arg=False):
         csv_reader = csv.reader(csv_file, delimiter=",")
         count=0
         for row in csv_reader:
+          # skip header
           if count == 0:
             count+=1
             continue
