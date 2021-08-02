@@ -11,6 +11,7 @@ from __future__ import print_function
 
 import os
 import re
+import csv
 
 from tensorflow.python.platform import gfile
 import tensorflow as tf
@@ -209,24 +210,41 @@ def splitToFrom(data_dir,inputFile,out_key):
     count = 0
     fromFile = out_key+"_q.txt"
     toFile = out_key+"_f.txt"
-    fr = open(os.path.join(data_dir,inputFile),"r")
     fw_from = open(os.path.join(data_dir,fromFile),"w")
     fw_to = open(os.path.join(data_dir,toFile),"w")
-    count = 0
-    for line in fr:
-        line = line.strip().split("\t")
-        if len(line)<2:
+    
+    if inputFile.endswith(".csv"):
+      with open(os.path.join(data_dir,inputFile)) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        count=0
+        for row in csv_reader:
+          if count == 0:
+            count+=1
             continue
-            
-        query = line[0]
-        lf = line[1]
-        fw_from.write(query+"\n")
-        fw_to.write(lf+"\n")
-        count += 1
-        
+          
+          fw_from.write(row[0]+"\n")
+          fw_to.write(row[1]+"\n")
+          count+=1
+          
+    else:
+      fr = open(os.path.join(data_dir,inputFile),"r")
+      count = 0
+      for line in fr:
+          line = line.strip().split("\t")
+          if len(line)<2:
+              continue
+              
+          query = line[0]
+          lf = line[1]
+          fw_from.write(query+"\n")
+          fw_to.write(lf+"\n")
+          count += 1
+      fr.close()
+          
     fw_from.close()
     fw_to.close()
-    fr.close()
+      
+
     print("to-from split complete. number of lines =",count)    
     return
     

@@ -239,6 +239,9 @@ def train():
       print("using train files",from_dev_data,"and",to_dev_data,"for validation")
     
   
+    # preprocess file
+    data_utils.identify_constants(from_train_data,to_train_data)
+
     from_train, to_train, from_dev, to_dev, _, _ = data_utils.prepare_data(
         FLAGS.data_dir,
         from_train_data,
@@ -252,6 +255,8 @@ def train():
       print("Preparing data in %s" % FLAGS.data_dir)
       
   print("data preparation complete!")
+
+  return
   
   config_ = tf.ConfigProto()
   config_.gpu_options.allow_growth = True
@@ -363,7 +368,6 @@ def train():
 # function computing test accuracy
 #-----------------------------------------------------
 def test_accuracy(from_data,to_data):
-
     config_ = tf.ConfigProto()
     config_.gpu_options.allow_growth = True
     config_.allow_soft_placement = True
@@ -577,6 +581,8 @@ def main(_):
     if not (os.path.exists(from_test_data) and os.path.exists(to_test_data)):
         if FLAGS.test_file:
             data_utils.splitToFrom(FLAGS.data_dir,FLAGS.test_file,"test") # split to-from data
+            # preprocess file
+            data_utils.identify_constants(from_test_data)
         else:
             print("test data file missing!")
             return
