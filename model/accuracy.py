@@ -155,12 +155,8 @@ def compute_tree_accuracy(candidate_list,reference_list,vocab,rev_vocab,comm_dic
         sorted_reference_str = '%s' % ' '.join(rev_vocab[token] for token in sorted_reference)
         sorted_candidate_str = '%s' % ' '.join(rev_vocab[token] for token in sorted_candidate)
         
-        # print(reference_list)
-        # print(sorted_reference)
-        # print(sorted_reference_str)
-        # print(candidate_list)
-        # print(sorted_candidate)
-        # print(sorted_candidate_str)
+        print("prdicted:", sorted_reference_str)
+        print("expected:", sorted_candidate_str)
     
     return is_all_same(sorted_candidate,sorted_reference)
 
