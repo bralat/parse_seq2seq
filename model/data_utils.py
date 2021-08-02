@@ -265,7 +265,6 @@ def replace_constants(f_from_line, f_to_line=None):
     for ind,word in enumerate(target_words):
         f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(ind))
         f_from_line = f_from_line.replace(word, "arg"+str(ind))
-        print(f_to_line, f_from_line)
 
   else:
     tokens = nltk.word_tokenize(f_from_line)

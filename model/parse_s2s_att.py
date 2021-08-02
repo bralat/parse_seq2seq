@@ -252,8 +252,6 @@ def train():
       print("Preparing data in %s" % FLAGS.data_dir)
       
   print("data preparation complete!")
-
-  return
   
   config_ = tf.ConfigProto()
   config_.gpu_options.allow_growth = True
