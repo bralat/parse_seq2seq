@@ -561,15 +561,13 @@ def forward_pass(from_data, args_data):
             print(sen)
 
             #replace arguments
-            args = args.split(",")
-            print(args)
+            args = args.strip().split(",")
             for i,arg in enumerate(args):
               sen = sen.replace("arg"+str(i), arg)
 
             # save new data to file
             with open(path_to_output, "a") as file_object:
               file_object.write(sen+"\n")
-
 
 def main(_):
   if FLAGS.self_test:
@@ -608,7 +606,7 @@ def main(_):
 
     f_from_data.close()
     f_args_data.close()
-      
+     
     print("computing output ...")
     forward_pass(from_data, args_data)
   else:

@@ -266,6 +266,8 @@ def replace_constants(f_from_line, f_to_line=None):
   # get the nouns
   target_words = []
   for word in pos:
+    # if it's a noun and not the name of the robot ('robot'), append
+    # to target words
     if word[0] != "robot" and word[1] in ['NN','PRP', 'NNP']:
       target_words.append(word[0])
   
@@ -277,63 +279,6 @@ def replace_constants(f_from_line, f_to_line=None):
           f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(ind))
    
   return f_from_line, f_to_line, target_words
-    
-def identify_constants (from_train_path, to_train_path=None):
-    '''
-    Identifies the function arguments that are meant to stay the same
-    from the natural language command to the executable
-    '''
-    # open from file
-    f_from = open(from_train_path,"r+")
-    f_from_lines = f_from.readlines()
-
-    #open to file
-    if to_train_path:
-      # open to file
-      f_to = open(to_train_path,"r+")
-      # f_to_lines = f_to.readlines()
-
-      for i in range(len(f_to)):
-        # find words in to
-        target_words = re.findall(r'"(.*?)"', f_to_lines[i])
-        # replace constants with ids
-        for ind,word in enumerate(target_words):
-            f_to_line = f_to_lines[i].replace('"'+word+'"', "arg"+str(ind))
-            f_from_line = f_from_lines[i].replace(word, "arg"+str(ind))
-            # print(f_to_line, f_from_line)
-            f_from.seek(i)
-            f_from.write(f_from_line)
-
-            f_to.seek(i)
-            f_to.write(f_to_line)
-            f_from.truncate()
-            f_from.close()
-
-    else:
-      # open arg file
-      f_args = open("args.txt", "r+")
-
-    for i in range(len(f_from_lines)):
-      f_from_lines[i], f_to_lines[i], args = replace_constants(f_from_lines[i], f_to_lines[i])
-      f_args.write(",".join(args)+"\n")
-
-    # overwrite previous content
-    if to_train_path:
-      f_to.seek(0)
-      f_to.writelines(f_to_lines)
-      f_to.truncate()
-      f_to.close()
-    else:
-      # close arg file
-      f_args.close()
-
-    f_from.seek(0)
-    f_from.writelines(f_from_lines)
-    f_from.truncate()
-    f_from.close()
-
-    # close arg file
-    f_args.close()
 
 def prepare_data(data_dir, from_train_path, to_train_path, from_dev_path, to_dev_path, from_vocabulary_size,
                  to_vocabulary_size, tokenizer=None):
