@@ -12,15 +12,20 @@ from __future__ import print_function
 import os
 import re
 import csv
-import nltk
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-from nltk.tokenize import word_tokenize
-from nltk import pos_tag
+# import nltk
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+import stanfordnlp
+# stanfordnlp.download('en')
+# from nltk.tokenize import word_tokenize
+# from nltk import pos_tag
 # nltk.download('all')
 
 from tensorflow.python.platform import gfile
 import tensorflow as tf
+
+# Prepare pos tagger
+nlp = stanfordnlp.Pipeline(processors = "tokenize,pos")
 
 # Special vocabulary symbols - we always put them at the start.
 _PAD = "_PAD"
@@ -259,21 +264,26 @@ def splitToFrom(data_dir,inputFile,out_key, id_arg=False):
     return
 
 def replace_constants(f_from_line, f_to_line=None):
-  if f_to_line:
-    # find words in to
-    target_words = re.findall(r'"(.*?)"', f_to_line)
-    # replace constants with ids
-    for ind,word in enumerate(target_words):
-        f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(ind))
-        f_from_line = f_from_line.replace(word, "arg"+str(ind))
+  doc = nlp(f_from_line)
 
-  else:
-    tokens = nltk.word_tokenize(f_from_line)
-    pos = nltk.pos_tag(tokens)
+  pos = []
+  for sent in doc.sentences:
+      for word in sent.words:
+          pos.append((word.text, word.pos))
 
-    # get the nouns
-    target_words = [i[0] for i in pos if i[1] == 'NN']
-
+  # get the nouns
+  target_words = []
+  for word in pos:
+    if word[0] != "robot" and word[1] in ['NN','PRP', 'NNP']:
+      target_words.append(word[0])
+  
+  # replace constants with ids
+  for ind,word in enumerate(target_words):
+      f_from_line = f_from_line.replace(word, "arg"+str(ind))
+    
+      if f_to_line:
+          f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(ind))
+   
   return f_from_line, f_to_line, target_words
     
 def identify_constants (from_train_path, to_train_path=None):

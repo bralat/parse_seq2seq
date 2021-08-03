@@ -7,3 +7,4 @@ data/*
 !data/geoqueries_test.txt
 !data/dataset_train.csv
 !data/dataset_test.csv
+/model/*ipynb

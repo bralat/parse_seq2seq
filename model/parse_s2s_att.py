@@ -252,6 +252,7 @@ def train():
       print("Preparing data in %s" % FLAGS.data_dir)
       
   print("data preparation complete!")
+  return
   
   config_ = tf.ConfigProto()
   config_.gpu_options.allow_growth = True
@@ -561,8 +562,9 @@ def forward_pass(from_data, args_data):
             print(sen)
 
             #replace arguments
-            
-            for i,arg in enumerate(args.split(",")):
+            args = args.split(",")
+            print(args)
+            for i,arg in enumerate(args):
               sen = sen.replace("arg"+str(i), arg)
 
             # save new data to file
