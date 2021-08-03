@@ -12,15 +12,7 @@ from __future__ import print_function
 import os
 import re
 import csv
-# import nltk
-# nltk.download('punkt')
-# nltk.download('averaged_perceptron_tagger')
 import stanfordnlp
-# stanfordnlp.download('en')
-# from nltk.tokenize import word_tokenize
-# from nltk import pos_tag
-# nltk.download('all')
-
 from tensorflow.python.platform import gfile
 import tensorflow as tf
 
