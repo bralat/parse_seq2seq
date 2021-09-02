@@ -17,7 +17,7 @@ Python 3.5
 ### For training model:
 
 ```
-python model/parse_s2s_att.py --data_dir=data --train_dir=checkpoint --train_file=geoqueries_train.txt --test_file=geoqueries_test.txt
+python model/parse_s2s_att.py --data_dir=data --train_dir=checkpoint --train_file=dataset_train.csv --test_file=dataset_test.csv
 ```
 
 ### For testing model:

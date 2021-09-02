@@ -548,6 +548,7 @@ def forward_pass(from_data, args_data):
             # Get output logits for the sentence.
             _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs,
                                        target_weights, bucket_id, True)
+                                       
             # This is a greedy decoder - outputs are just argmaxes of output_logits.
             outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
             # print(outputs)
@@ -593,7 +594,7 @@ def main(_):
       print("test data file missing!")
       return
 
-    #identify constants
+    #identify constants and save to file
     from_data = os.path.join(FLAGS.data_dir, "inference_q.txt")
     args_data = os.path.join(FLAGS.data_dir, "inference_q.txt.args")
     f_from_data = open(from_data, 'w')
@@ -610,6 +611,16 @@ def main(_):
     print("computing output ...")
     forward_pass(from_data, args_data)
   else:
+    from_train_data = os.path.join(FLAGS.data_dir, "train_q.txt")
+    to_train_data = os.path.join(FLAGS.data_dir, "train_f.txt")
+
+    if not (os.path.exists(from_train_data) and os.path.exists(to_train_data)):
+        if FLAGS.test_file:
+            data_utils.splitToFrom(FLAGS.data_dir,FLAGS.train_file,"train", id_arg=True) # split to-from data
+        else:
+            print("train data file missing!")
+            return
+
     train()
 
 if __name__ == "__main__":
