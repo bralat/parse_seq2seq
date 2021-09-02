@@ -268,7 +268,7 @@ def replace_constants(f_from_line, f_to_line=None):
   for word in pos:
     # if it's a noun and not the name of the robot ('robot'), append
     # to target words
-    if word[0] != "robot" and word[1] in ['NN','PRP', 'NNP']:
+    if word[0] != "robot" and word[1] in ['NN', 'NNP']:
       if word[0] not in target_words:
         target_words.append(word[0])
   
