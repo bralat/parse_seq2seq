@@ -269,15 +269,16 @@ def replace_constants(f_from_line, f_to_line=None):
     # if it's a noun and not the name of the robot ('robot'), append
     # to target words
     if word[0] != "robot" and word[1] in ['NN','PRP', 'NNP']:
-      target_words.append(word[0])
+      if word[0] not in target_words:
+        target_words.append(word[0])
   
   # replace constants with ids
   for ind,word in enumerate(target_words):
       f_from_line = f_from_line.replace(word, "arg"+str(ind))
     
       if f_to_line:
-          f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(ind))
-   
+          f_to_line = f_to_line.replace(word, "arg"+str(ind))
+
   return f_from_line, f_to_line, target_words
 
 def prepare_data(data_dir, from_train_path, to_train_path, from_dev_path, to_dev_path, from_vocabulary_size,
