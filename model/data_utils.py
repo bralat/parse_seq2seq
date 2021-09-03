@@ -12,12 +12,8 @@ from __future__ import print_function
 import os
 import re
 import csv
-import stanfordnlp
 from tensorflow.python.platform import gfile
 import tensorflow as tf
-
-# Prepare pos tagger
-nlp = stanfordnlp.Pipeline(processors = "tokenize,pos")
 
 # Special vocabulary symbols - we always put them at the start.
 _PAD = "_PAD"
@@ -259,13 +255,7 @@ def splitToFrom(data_dir,inputFile,out_key, id_arg=False):
     return
 
 def replace_constants(f_from_line, f_to_line=None):
-  doc = nlp(f_from_line)
-
-  pos = []
   target_words = []
-  for sent in doc.sentences:
-      for word in sent.words:
-          pos.append((word.text, word.pos))
 
   # get target objects first
   for word in TARGET_OBJECTS:
