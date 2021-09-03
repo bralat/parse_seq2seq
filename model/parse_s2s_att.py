@@ -621,7 +621,7 @@ def main(_):
             print("train data file missing!")
             return
 
-    # train()
+    train()
 
 if __name__ == "__main__":
   tf.app.run()
