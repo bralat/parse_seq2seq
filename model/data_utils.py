@@ -274,19 +274,7 @@ def replace_constants(f_from_line, f_to_line=None):
       
       f_from_line = f_from_line.replace(word, "arg"+str(len(target_words)))
       f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(len(target_words)))
-      print(f_from_line, f_to_line)
       target_words.append(word)
-      
-
-  # get the nouns
-  for word in pos:
-    # if it's a noun and not the name of the robot ('robot'), append
-    # to target words
-    if word[0] != "robot" and \
-       word[0] not in target_words and\
-       word[1] in ['NN', 'NNP'] and \
-       word[0] in f_from_line:
-        target_words.append(word[0])
   
   # replace constants with ids
   for ind,word in enumerate(target_words):
