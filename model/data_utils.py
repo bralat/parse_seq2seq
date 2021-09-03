@@ -31,6 +31,9 @@ GO_ID = 1
 EOS_ID = 2
 UNK_ID = 3
 
+TARGET_OBJECTS = [
+  "red block", "green block", "yellow block", "blue block", "purple block", "orange block"]
+
 
 def basic_tokenizer(sentence):
   """Very basic tokenizer: split the sentence into a list of tokens."""
@@ -259,17 +262,30 @@ def replace_constants(f_from_line, f_to_line=None):
   doc = nlp(f_from_line)
 
   pos = []
+  target_words = []
   for sent in doc.sentences:
       for word in sent.words:
           pos.append((word.text, word.pos))
 
+  # get target objects first
+  for word in TARGET_OBJECTS:
+    ind = f_from_line.find(word)
+    if ind != -1:
+      
+      f_from_line = f_from_line.replace(word, "arg"+str(len(target_words)))
+      f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(len(target_words)))
+      print(f_from_line, f_to_line)
+      target_words.append(word)
+      
+
   # get the nouns
-  target_words = []
   for word in pos:
     # if it's a noun and not the name of the robot ('robot'), append
     # to target words
-    if word[0] != "robot" and word[1] in ['NN', 'NNP']:
-      if word[0] not in target_words:
+    if word[0] != "robot" and \
+       word[0] not in target_words and\
+       word[1] in ['NN', 'NNP'] and \
+       word[0] in f_from_line:
         target_words.append(word[0])
   
   # replace constants with ids
@@ -277,7 +293,7 @@ def replace_constants(f_from_line, f_to_line=None):
       f_from_line = f_from_line.replace(word, "arg"+str(ind))
     
       if f_to_line:
-          f_to_line = f_to_line.replace(word, "arg"+str(ind))
+          f_to_line = f_to_line.replace('"'+word+'"', "arg"+str(ind))
 
   return f_from_line, f_to_line, target_words
 
